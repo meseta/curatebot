@@ -14,7 +14,5 @@ import { Vue, Component } from 'vue-property-decorator';
 import Section from '@/components/Section.vue'
 
 @Component({ components: { Section } })
-export default class HomeView extends Vue {
-
-}
+export default class HomeView extends Vue {}
 </script>

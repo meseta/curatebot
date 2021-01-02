@@ -1,8 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <v-btn text>Link</v-btn>
-    </v-app-bar>
+    <AppBar />
 
     <v-main>
       <v-container fluid>
@@ -17,9 +15,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import AppBar from '@/components/AppBar.vue'
 
-@Component
-export default class AppView extends Vue {
-
-}
+@Component({ components: { AppBar } })
+export default class AppView extends Vue {}
 </script>
