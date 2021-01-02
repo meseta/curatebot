@@ -1,5 +1,14 @@
-import { firebase } from '@/plugins/firebase'
+export interface UserData {
+  profileImage: string,
+  name: string,
+  handle: string,
+  id: string,
+  accessToken: string,
+  secret: string,
+}
 
 export interface AuthState {
-  user: firebase.User | null
+  uid: string | null;
+  userData: UserData | null;
 }
+
