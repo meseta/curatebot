@@ -9,14 +9,12 @@
   </v-container>
 </template>
 
-<script>
-// @ is an alias to /src
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
 import Section from '@/components/Section.vue'
 
-export default {
-  name: 'Home',
-  components: {
-    Section
-  }
+@Component({ components: { Section } })
+export default class HomeView extends Vue {
+
 }
 </script>
