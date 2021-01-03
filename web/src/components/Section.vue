@@ -11,6 +11,9 @@
       <slot></slot>
     </v-card-text>
 
+    <v-card-actions v-if="hasActions()">
+      <slot name="actions"></slot>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -18,5 +21,9 @@
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component
-export default class Section extends Vue {}
+export default class Section extends Vue {
+  hasActions() {
+    return !!this.$slots.actions;
+  }
+}
 </script>
