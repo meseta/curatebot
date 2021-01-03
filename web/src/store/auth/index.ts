@@ -37,7 +37,7 @@ const actions: ActionTree<AuthState, RootState>= {
       const credential: any = firebaseUserCredential?.credential; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       if(!uid || !profile || !credential) {
-        throw new Error("Empty credentials");
+        throw new Error('Empty credentials');
       }
 
       const userData: UserData = {
@@ -51,12 +51,12 @@ const actions: ActionTree<AuthState, RootState>= {
       commit('setUid', uid);
       commit('setUserData', userData);
 
-      return firestore.collection("users").doc(uid).set(userData, { merge: true });
+      return firestore.collection('users').doc(uid).set(userData, { merge: true });
     }).finally(() => {
-      commit('alert/showSuccess', "Successfully logged in", {root: true})
+      commit('alert/showSuccess', 'Successfully logged in', {root: true})
     }).catch((error) => {
       console.error(error);
-      commit('alert/showError', "Could not log in!", {root: true})
+      commit('alert/showError', 'Could not log in!', {root: true})
     });
   },
 
@@ -64,12 +64,12 @@ const actions: ActionTree<AuthState, RootState>= {
 
     const uid = firebaseUser.uid;
 
-    return firestore.collection("users").doc(uid).get()
+    return firestore.collection('users').doc(uid).get()
     .then(doc => {
       if (doc.exists) {
         commit('setUserData', doc.data());
         commit('setUid', uid);
-        commit('alert/showSuccess', "Automatically logged in", {root: true})
+        commit('alert/showSuccess', 'Automatically logged in', {root: true})
       }
     })
   },
@@ -77,7 +77,7 @@ const actions: ActionTree<AuthState, RootState>= {
   logout({commit}) {
     firebase.auth().signOut()
     commit('setUid', null);
-    commit('alert/showSuccess', "Logged out", {root: true})
+    commit('alert/showSuccess', 'Logged out', {root: true})
     router.push('/').catch(err => err);
   },
 }

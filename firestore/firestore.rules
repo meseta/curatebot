@@ -11,6 +11,10 @@ service cloud.firestore {
     
     match /users/{uid} {
       allow read, write: if isUser(uid);
+      
+      match /tweets/{tweetId} {
+      	allow read, write: if isUser(uid);
+      }
     }
 
     match /{document=**} {

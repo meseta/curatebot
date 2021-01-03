@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import Load from '../views/Load.vue'
+import Curate from '../views/Curate.vue'
 import store from '@/store'
 
 Vue.use(VueRouter)
@@ -11,14 +12,23 @@ const routes: Array<RouteConfig> = [
     path: '/',
     name: 'Home',
     component: Home,
-    meta: { title: "CurateBot" }
+    meta: { title: 'CurateBot' }
   },
   {
     path: '/load',
     name: 'Load',
     component: Load,
     meta: {
-      title: "CurateBot Load Data",
+      title: 'CurateBot Load Tweets',
+      requiresAuth: true,
+    }
+  },
+  {
+    path: '/curate',
+    name: 'Curate',
+    component: Curate,
+    meta: {
+      title: 'CurateBot Curate Tweets',
       requiresAuth: true,
     }
   },
@@ -38,7 +48,7 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
   if (requiresAuth && !store.getters['auth/isAuthenticated']) {
-    store.commit('alert/showError', "Please log in");
+    store.commit('alert/showError', 'Please log in');
     next('/');
   } else {
     next();

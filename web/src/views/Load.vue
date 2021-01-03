@@ -76,7 +76,7 @@ export default class LoadView extends Vue {
           
     if (!Array.isArray(tryDecode)) {
       this.decoded = [];
-      return "JSON parent was not Array";
+      return 'JSON parent was not Array';
     }
     
     this.decoded = tryDecode.map(String);
@@ -104,32 +104,38 @@ export default class LoadView extends Vue {
 
     this.uploading = true;
     const len = this.decoded.length;
+    let updated = 0;
     this.progress = 100/len;
 
     const promises = this.decoded.map((tweet) => {
       return this.hash(tweet)
       .then(hashHex => {
-        firestore.collection("users").doc(this.uid).collection("tweets").doc(hashHex).set({
+        firestore.collection('users').doc(this.uid).collection('tweets').doc(hashHex).set({
           tweet,
           added: firebase.firestore.FieldValue.serverTimestamp(),
-          seen: false,
           queued: false
         }, {merge: true})
       })
       .then(() => {
+        updated += 1;
         this.progress += 100/len;
       })
     })
 
     Promise.all(promises)
     .then(() => {
-      this.showSuccess("Completed uploading tweets")
-      this.input = "";
-      this.$router.push("/")
+      this.showSuccess(`Completed uploading ${updated} tweets`)
+      this.input = '';
+      this.$router.push('/curate')
     })
     .catch(err => {
       console.log(err)
-      this.showError("Could not load all tweets")
+      this.showError(`Could not load all tweets, ${updated} were updated`)
+    })
+    .finally(() => {
+      firestore.collection('users').doc(this.uid).update({
+        newCount: firebase.firestore.FieldValue.increment(updated)
+      });
     })
 
   }
