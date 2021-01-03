@@ -4,7 +4,7 @@
       <template v-slot:title>
         Curate Tweets
         <v-spacer></v-spacer>
-        <v-chip outlined dark>{{ count }} Tweets</v-chip>
+        <v-chip outlined dark>{{ count }} tweets to curate</v-chip>
       </template>
 
       <v-textarea
@@ -15,6 +15,10 @@
         :readonly="!editing"
         :disabled="currentLoading"
         :loading="loading"
+        v-touch="{
+          left: () => deleteAction(true),
+          right: () => enqueueAction(true),
+        }"
       >
         <template v-slot:progress>
           <v-progress-linear absolute indeterminate></v-progress-linear>
@@ -31,8 +35,17 @@
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn
+          v-if="editing"
+          color="primary"
+          @click="saveAction"
+        >
+          Save
+        </v-btn>
+        <v-btn
+          v-else
           :disabled="!tweetActionable"
           color="primary"
+          @click="editAction"
         >
           Edit
         </v-btn>
@@ -93,9 +106,33 @@ export default class LoadView extends Vue {
   set displayTweet(tweet: string) {
     this.currentTweet = tweet;
   }
-  
-  enqueueAction() {
+
+  editAction() {
     if (this.currentDocRef) {
+      this.editing = true
+    }
+  }
+
+  saveAction() {
+    if (this.currentDocRef && this.editing && this.currentTweet) {
+      this.currentLoading = true;
+
+      this.currentDocRef.update({
+        tweet: this.currentTweet
+      })
+      .then(() => {
+        this.currentLoading = false;
+        this.editing = false;
+      })
+      .catch(err => {
+        console.error(err)
+        this.showError("Something went wrong, could not edit tweet");
+      })
+    }
+  }
+  
+  enqueueAction(alert = false) {
+    if (this.currentDocRef && !this.editing) {
       this.currentLoading = true
 
       this.currentDocRef.update({
@@ -109,6 +146,9 @@ export default class LoadView extends Vue {
       .then(() => {
         this.currentLoading = false
         this.count -= 1;
+        if (alert) {
+          this.showSuccess("Tweet enqueued")
+        }
         return this.advance()
       })
       .catch(err => {
@@ -119,8 +159,8 @@ export default class LoadView extends Vue {
   }
 
 
-  deleteAction() {
-    if (this.currentDocRef) {
+  deleteAction(alert = false) {
+    if (this.currentDocRef && !this.editing) {
       this.currentLoading = true
 
       this.currentDocRef.delete()
@@ -132,6 +172,9 @@ export default class LoadView extends Vue {
       .then(() => {
         this.currentLoading = false
         this.count -= 1;
+        if (alert) {
+          this.showSuccess("Tweet deleted")
+        }
         return this.advance()
       })
       .catch(err => {
