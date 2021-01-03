@@ -12,9 +12,6 @@ const state: AuthState = {
 const getters: GetterTree<AuthState, RootState> = {
   isAuthenticated (state): boolean {
     return state.uid !== null && state.userData !== null;
-  },
-  test(state): string {
-    return "hello";
   }
 }
 
@@ -22,6 +19,7 @@ const mutations: MutationTree<AuthState> = {
   setUid (state, uid: string) {
     state.uid = uid;
   },
+
   setUserData (state, userData: UserData) {
     state.userData = userData;
   },
@@ -30,8 +28,8 @@ const mutations: MutationTree<AuthState> = {
 const actions: ActionTree<AuthState, RootState>= {
   login({commit}) {
     const provider = new firebase.auth.TwitterAuthProvider();
-    console.log("start login");
-    firebaseAuth.signInWithPopup(provider)
+
+    return firebaseAuth.signInWithPopup(provider)
     .then((firebaseUserCredential: firebase.auth.UserCredential) => {
       
       const uid = firebaseUserCredential?.user?.uid;
@@ -39,7 +37,7 @@ const actions: ActionTree<AuthState, RootState>= {
       const credential: any = firebaseUserCredential?.credential; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       if(!uid || !profile || !credential) {
-        throw new Error();
+        throw new Error("Empty credentials");
       }
 
       const userData: UserData = {
@@ -54,16 +52,32 @@ const actions: ActionTree<AuthState, RootState>= {
       commit('setUserData', userData);
 
       return firestore.collection("users").doc(uid).set(userData, { merge: true });
+    }).finally(() => {
+      commit('alert/showSuccess', "Successfully logged in", {root: true})
     }).catch((error) => {
       console.error(error);
+      commit('alert/showError', "Could not log in!", {root: true})
     });
   },
+
   autoLogin({commit}, firebaseUser: firebase.User) {
-    commit('setUid', firebaseUser.uid);
+
+    const uid = firebaseUser.uid;
+
+    return firestore.collection("users").doc(uid).get()
+    .then(doc => {
+      if (doc.exists) {
+        commit('setUserData', doc.data());
+        commit('setUid', uid);
+        commit('alert/showSuccess', "Automatically logged in", {root: true})
+      }
+    })
   },
+
   logout({commit}) {
     firebase.auth().signOut()
     commit('setUid', null);
+    commit('alert/showSuccess', "Logged out", {root: true})
     router.push('/').catch(err => err);
   },
 }

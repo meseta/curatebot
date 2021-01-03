@@ -1,10 +1,10 @@
 export interface UserData {
-  profileImage: string,
-  name: string,
-  handle: string,
-  id: string,
-  accessToken: string,
-  secret: string,
+  profileImage: string;
+  name: string;
+  handle: string;
+  id: string;
+  accessToken: string;
+  secret: string;
 }
 
 export interface AuthState {
