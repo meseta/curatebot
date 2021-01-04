@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Load from '../views/Load.vue'
 import Curate from '../views/Curate.vue'
 import Tweets from '../views/Tweets.vue'
+import Schedule from '../views/Schedule.vue'
 import store from '@/store'
 
 Vue.use(VueRouter)
@@ -38,7 +39,16 @@ const routes: Array<RouteConfig> = [
     name: 'Tweets',
     component: Tweets,
     meta: {
-      title: 'CurateBot Tweets',
+      title: 'CurateBot Queued Tweets',
+      requiresAuth: true,
+    }
+  },
+  {
+    path: '/schedule',
+    name: 'Schedule',
+    component: Schedule,
+    meta: {
+      title: 'CurateBot Schedule Tweets',
       requiresAuth: true,
     }
   },

@@ -28,22 +28,23 @@
         counter
         auto-grow
         rows=2
-        :readonly="currentlyEditing !== item.id"
+        readonly
       >
       </v-textarea>
     </Section>
 
-    <v-container class="mx-auto text-center" max-width="860">
+    <Container>
       <v-progress-linear v-if="loading" indeterminate></v-progress-linear>
       <v-btn v-else-if="!listComplete" color="primary" @click="loadMore()">Load more</v-btn>
       <v-btn v-else disabled>No more to load</v-btn>
-    </v-container>
+    </Container>
   </v-container>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import Section from '@/components/Section.vue'
+import Container from '@/components/Container.vue'
 import { firestore, firebase } from '@/plugins/firebase'
 import { State, Mutation } from 'vuex-class';
 
@@ -55,7 +56,7 @@ interface TweetData {
 
 const pagesize = 10
 
-@Component({ components: { Section } })
+@Component({ components: { Section, Container } })
 export default class LoadView extends Vue {
   @State('uid', { namespace: 'auth' }) uid!: string;
   @Mutation('showError', { namespace: 'alert'}) showError!: Function;
@@ -64,8 +65,6 @@ export default class LoadView extends Vue {
   @Mutation('showInfo', { namespace: 'alert'}) showInfo!: Function;
 
   tweets: Array<TweetData> = [];
-  currentlyEditing = "";
-
   loading = true;
   listComplete = false;
 
