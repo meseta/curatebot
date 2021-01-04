@@ -63,7 +63,7 @@ export default class LoadView extends Vue {
 
   validate(input: string) {
     if (!input) {
-      return true
+      return true;
     }
 
     let tryDecode;
@@ -71,7 +71,7 @@ export default class LoadView extends Vue {
       tryDecode = JSON.parse(input)
     } catch(err) {
       this.decoded = [];
-      return err.message
+      return err.message;
     }
           
     if (!Array.isArray(tryDecode)) {
@@ -80,7 +80,7 @@ export default class LoadView extends Vue {
     }
     
     this.decoded = tryDecode.map(String);
-    return true
+    return true;
   }
 
   hash(input: string) {
@@ -95,11 +95,11 @@ export default class LoadView extends Vue {
 
   upload() {
     if (this.validate(this.input) !== true) {
-      return
+      return;
     }
 
     if (!this.decoded.length) {
-      return
+      return;
     }
 
     this.uploading = true;
@@ -110,7 +110,7 @@ export default class LoadView extends Vue {
     const promises = this.decoded.map((tweet) => {
       return this.hash(tweet)
       .then(hashHex => {
-        firestore.collection('users').doc(this.uid).collection('tweets').doc(hashHex).set({
+        return firestore.collection('users').doc(this.uid).collection('tweets').doc(hashHex).set({
           tweet,
           added: firebase.firestore.FieldValue.serverTimestamp(),
           queued: false
@@ -128,13 +128,13 @@ export default class LoadView extends Vue {
       return firebase.firestore().waitForPendingWrites()
     })
     .then(() => {
-      this.showSuccess(`Completed uploading ${updated} tweets`)
+      this.showSuccess(`Completed uploading ${updated} tweets`);
       this.input = '';
-      this.$router.push('/curate')
+      this.$router.push('/curate');
     })
     .catch(err => {
-      console.log(err)
-      this.showError(`Could not load all tweets, ${updated} were updated`)
+      console.log(err);
+      this.showError(`Could not load all tweets, ${updated} were updated`);
     })
     .finally(() => {
       firestore.collection('users').doc(this.uid).update({

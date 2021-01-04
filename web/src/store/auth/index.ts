@@ -7,6 +7,7 @@ import { firebase, firestore, auth as firebaseAuth } from '@/plugins/firebase'
 const state: AuthState = {
   uid: null,
   userData: null,
+  isActive: false,
 }
 
 const getters: GetterTree<AuthState, RootState> = {
@@ -22,6 +23,10 @@ const mutations: MutationTree<AuthState> = {
 
   setUserData (state, userData: UserData) {
     state.userData = userData;
+  },
+  
+  setActive (state, active: boolean) {
+    state.isActive = active;
   },
 }
 
@@ -68,6 +73,7 @@ const actions: ActionTree<AuthState, RootState>= {
     .then(doc => {
       if (doc.exists) {
         commit('setUserData', doc.data());
+        commit('setActive', doc.get('isActive'));
         commit('setUid', uid);
         commit('alert/showSuccess', 'Automatically logged in', {root: true})
       }
@@ -75,11 +81,28 @@ const actions: ActionTree<AuthState, RootState>= {
   },
 
   logout({commit}) {
-    firebase.auth().signOut()
+    firebaseAuth.signOut()
     commit('setUid', null);
+    commit('setActive', false);
     commit('alert/showSuccess', 'Logged out', {root: true})
     router.push('/').catch(err => err);
   },
+
+  markActive({state, commit}) {
+    console.log("setting active");
+    // mechanism to mark active when needed
+    if (!state.isActive && state.uid) {
+      return firestore.collection('users').doc(state.uid).update({
+        isActive: true
+      })
+      .then(() => {
+        commit('setActive', true);
+      }).catch((error) => {
+        console.error(error);
+        commit('alert/showError', 'Could not set schedule active!', {root: true})
+      });
+    }
+  }
 }
 
 export const auth: Module<AuthState, RootState> = {

@@ -85,8 +85,16 @@ export default class LoadView extends Vue {
   saveAction() {
     if (!this.loading) {
       this.loading = true;
+
+      const enabled = [];
+      for (const idx in this.schedule) {
+        if (this.schedule[idx]) {
+          enabled.push(idx);
+        }
+      }
+
       return firestore.collection('users').doc(this.uid).update({
-        schedule: this.schedule
+        scheduleEnabled: enabled
       })
       .then(() => {
         this.showSuccess("Schedule updated");
@@ -103,9 +111,12 @@ export default class LoadView extends Vue {
     this.loading = true;
     return firestore.collection('users').doc(this.uid).get()
     .then(doc => {
-      const schedule = doc.get("schedule")
-      if (schedule) {
-        this.schedule = schedule;
+      const scheduleEnabled = doc.get("scheduleEnabled")
+      if (scheduleEnabled) {
+        this.schedule = new Array(24*7).fill(false);
+        for (const idx of scheduleEnabled) {
+          this.schedule[idx] = true;
+        }
       }
     })
     .catch(err => {

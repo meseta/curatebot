@@ -10,5 +10,6 @@ export interface UserData {
 export interface AuthState {
   uid: string | null;
   userData: UserData | null;
+  isActive: boolean;
 }
 

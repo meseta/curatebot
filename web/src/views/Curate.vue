@@ -68,14 +68,19 @@
 import { Vue, Component } from 'vue-property-decorator';
 import Section from '@/components/Section.vue'
 import { firestore, firebase } from '@/plugins/firebase'
-import { State, Mutation } from 'vuex-class';
+import { State, Mutation, Action, namespace} from 'vuex-class';
+
+const authModule = namespace('auth')
+const alertModule = namespace('alert')
+
 
 @Component({ components: { Section } })
 export default class LoadView extends Vue {
-  @State('uid', { namespace: 'auth' }) uid!: string;
-  @Mutation('showError', { namespace: 'alert'}) showError!: Function;
-  @Mutation('showSuccess', { namespace: 'alert'}) showSuccess!: Function;
-  @Mutation('showWarning', { namespace: 'alert'}) showWarning!: Function;
+  @authModule.State uid!: string;
+  @authModule.Action markActive!: Function;
+  @alertModule.Mutation showError!: Function;
+  @alertModule.Mutation showSuccess!: Function;
+  @alertModule.Mutation showWarning!: Function;
 
   count = 0;
   currentId = "";
@@ -111,7 +116,7 @@ export default class LoadView extends Vue {
 
   editAction() {
     if (this.currentDoc) {
-      this.editing = true
+      this.editing = true;
     }
   }
 
@@ -135,7 +140,7 @@ export default class LoadView extends Vue {
   
   enqueueAction(alert = false) {
     if (this.currentDoc && !this.editing) {
-      this.currentLoading = true
+      this.currentLoading = true;
 
       return this.currentDoc.ref.update({
         queued: true
@@ -146,15 +151,16 @@ export default class LoadView extends Vue {
         });
       })
       .then(() => {
-        this.currentLoading = false
+        this.currentLoading = false;
         this.count -= 1;
         if (alert) {
           this.showSuccess("Tweet enqueued")
         }
-        return this.advance()
+        this.markActive();
+        return this.advance();
       })
       .catch(err => {
-        console.error(err)
+        console.error(err);
         this.showError("Something went wrong, could not delete tweet");
       })
     }
@@ -163,7 +169,7 @@ export default class LoadView extends Vue {
 
   deleteAction(alert = false) {
     if (this.currentDoc && !this.editing) {
-      this.currentLoading = true
+      this.currentLoading = true;
 
       return this.currentDoc.ref.delete()
       .then(() => {
@@ -172,15 +178,15 @@ export default class LoadView extends Vue {
         });
       })
       .then(() => {
-        this.currentLoading = false
+        this.currentLoading = false;
         this.count -= 1;
         if (alert) {
-          this.showWarning("Tweet deleted")
+          this.showWarning("Tweet deleted");
         }
-        return this.advance()
+        return this.advance();
       })
       .catch(err => {
-        console.error(err)
+        console.error(err);
         this.showError("Something went wrong, could not delete tweet");
       })
     }
@@ -200,9 +206,9 @@ export default class LoadView extends Vue {
     this.currentTweet = this.nextTweet;
     this.currentDoc = this.nextDoc;
 
-    this.nextId = ""
-    this.nextTweet = ""
-    this.nextDoc = null
+    this.nextId = "";
+    this.nextTweet = "";
+    this.nextDoc = null;
 
     if (this.currentDoc) {
       this.nextLoading = true;
@@ -216,7 +222,7 @@ export default class LoadView extends Vue {
           this.nextDoc = query.docs[0];
 
           if(!this.currentDoc) { // in case current tweet was already dealt with while a document was being fetched
-            return this.advance()
+            return this.advance();
           }
         }
       })
