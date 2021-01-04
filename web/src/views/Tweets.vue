@@ -36,7 +36,7 @@
     <Container>
       <v-progress-linear v-if="loading" indeterminate></v-progress-linear>
       <v-btn v-else-if="!listComplete" color="primary" @click="loadMore()">Load more</v-btn>
-      <v-btn v-else disabled>No more to load</v-btn>
+      <v-btn v-else disabled>No more tweets to load</v-btn>
     </Container>
   </v-container>
 </template>

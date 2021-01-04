@@ -1,14 +1,16 @@
 <template>
   <v-app-bar app color="primary" dark>
-  
-    <v-btn text to="/">About</v-btn>
+    <v-toolbar-items>
+    <v-btn text icon to="/"><v-icon>mdi-hand-heart</v-icon></v-btn>
+
     <v-btn text v-if="isAuthenticated" to="/load">Load</v-btn>
     <v-btn text v-if="isAuthenticated" to="/curate">Curate</v-btn>
     <v-btn text v-if="isAuthenticated" to="/tweets">Tweets</v-btn>
     <v-btn text v-if="isAuthenticated" to="/schedule">Schedule</v-btn>
     <v-btn text v-if="isAuthenticated" @click="logout()">Log out</v-btn>
     <v-btn v-else text @click="login()">Log in with Twitter</v-btn>
-
+    
+    </v-toolbar-items>
     <v-spacer></v-spacer>
 
     <v-sheet v-if="isAuthenticated" color="rgba(0,0,0,0)">
@@ -27,7 +29,6 @@
       </v-list-item-avatar>
     </v-list-item>
     </v-sheet>
-
 
   </v-app-bar>
 </template>

@@ -3,8 +3,14 @@
     <Section>
       <template v-slot:title>Welcome to CurateBot</template>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc faucibus nulla massa, sed porta dui pretium ut. Aenean vulputate laoreet dapibus. Vestibulum lacinia nibh at lectus semper pretium. Pellentesque semper ut ante eget finibus. Ut scelerisque velit neque. Ut porta ex orci, vitae eleifend ante pellentesque in. 
+        CurateBot is a simple bot to curate tweets, and post them on a schedule.
       </p>
+      <ol>
+        <li>Load a big list of tweets as a JSON</li>
+        <li>Curate tweets by deciding whether to delete or enqueue</li>
+        <li>Set up a schedule for tweets to be posted</li>
+        <li>The bot will automatically tweet from your queued tweets on the schedule!</li>
+      </ol>
     </Section>
   </v-container>
 </template>
