@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import Load from '../views/Load.vue'
 import Curate from '../views/Curate.vue'
+import Tweets from '../views/Tweets.vue'
 import store from '@/store'
 
 Vue.use(VueRouter)
@@ -29,6 +30,15 @@ const routes: Array<RouteConfig> = [
     component: Curate,
     meta: {
       title: 'CurateBot Curate Tweets',
+      requiresAuth: true,
+    }
+  },
+  {
+    path: '/tweets',
+    name: 'Tweets',
+    component: Tweets,
+    meta: {
+      title: 'CurateBot Tweets',
       requiresAuth: true,
     }
   },

@@ -1,9 +1,9 @@
 <template>
   <v-card
     class="my-4 mx-auto"
-    max-width="860"
+    max-width="600"
   >
-    <v-card-title class="primary white--text mb-5">
+    <v-card-title v-if="hasTitle()" class="primary white--text mb-5">
       <slot name="title"></slot>
     </v-card-title>
 
@@ -22,6 +22,9 @@ import { Vue, Component } from 'vue-property-decorator';
 
 @Component
 export default class Section extends Vue {
+  hasTitle() {
+    return !!this.$slots.title;
+  }
   hasActions() {
     return !!this.$slots.actions;
   }

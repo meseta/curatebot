@@ -19,6 +19,7 @@
           left: () => deleteAction(true),
           right: () => enqueueAction(true),
         }"
+        @click="editAction"
       >
         <template v-slot:progress>
           <v-progress-linear absolute indeterminate></v-progress-linear>
@@ -74,15 +75,16 @@ export default class LoadView extends Vue {
   @State('uid', { namespace: 'auth' }) uid!: string;
   @Mutation('showError', { namespace: 'alert'}) showError!: Function;
   @Mutation('showSuccess', { namespace: 'alert'}) showSuccess!: Function;
+  @Mutation('showWarning', { namespace: 'alert'}) showWarning!: Function;
 
   count = 0;
   currentId = "";
   currentTweet = "";
-  currentDocRef: firebase.firestore.DocumentReference | null = null;
+  currentDoc: firebase.firestore.DocumentSnapshot | null = null;
 
   nextId = "";
   nextTweet = "";
-  nextDocRef: firebase.firestore.DocumentReference | null = null;
+  nextDoc: firebase.firestore.DocumentSnapshot | null = null;
 
   editing = false;
 
@@ -108,16 +110,16 @@ export default class LoadView extends Vue {
   }
 
   editAction() {
-    if (this.currentDocRef) {
+    if (this.currentDoc) {
       this.editing = true
     }
   }
 
   saveAction() {
-    if (this.currentDocRef && this.editing && this.currentTweet) {
+    if (this.currentDoc && this.editing && this.currentTweet) {
       this.currentLoading = true;
 
-      this.currentDocRef.update({
+      return this.currentDoc.ref.update({
         tweet: this.currentTweet
       })
       .then(() => {
@@ -132,10 +134,10 @@ export default class LoadView extends Vue {
   }
   
   enqueueAction(alert = false) {
-    if (this.currentDocRef && !this.editing) {
+    if (this.currentDoc && !this.editing) {
       this.currentLoading = true
 
-      this.currentDocRef.update({
+      return this.currentDoc.ref.update({
         queued: true
       })
       .then(() => {
@@ -160,10 +162,10 @@ export default class LoadView extends Vue {
 
 
   deleteAction(alert = false) {
-    if (this.currentDocRef && !this.editing) {
+    if (this.currentDoc && !this.editing) {
       this.currentLoading = true
 
-      this.currentDocRef.delete()
+      return this.currentDoc.ref.delete()
       .then(() => {
         return firestore.collection('users').doc(this.uid).update({
           newCount: firebase.firestore.FieldValue.increment(-1)
@@ -173,7 +175,7 @@ export default class LoadView extends Vue {
         this.currentLoading = false
         this.count -= 1;
         if (alert) {
-          this.showSuccess("Tweet deleted")
+          this.showWarning("Tweet deleted")
         }
         return this.advance()
       })
@@ -190,30 +192,30 @@ export default class LoadView extends Vue {
       // so just clear display and wait
       this.currentId = "";
       this.currentTweet = "";
-      this.currentDocRef = null;
+      this.currentDoc = null;
       return
     }
     
     this.currentId = this.nextId;
     this.currentTweet = this.nextTweet;
-    this.currentDocRef = this.nextDocRef;
+    this.currentDoc = this.nextDoc;
 
     this.nextId = ""
     this.nextTweet = ""
-    this.nextDocRef = null
+    this.nextDoc = null
 
-    if (this.currentDocRef) {
+    if (this.currentDoc) {
       this.nextLoading = true;
       return firestore.collection('users').doc(this.uid).collection('tweets')
-      .where('queued', '==', false).orderBy('added').limit(2).get()
+      .where('queued', '==', false).orderBy('added').startAfter(this.currentDoc).limit(1).get()
       .then(query => {
         this.nextLoading = false;
-        if (query.size > 1) {
-          this.nextId = query.docs[1].id;
-          this.nextTweet = query.docs[1].get("tweet");
-          this.nextDocRef = query.docs[1].ref;
+        if (query.size) {
+          this.nextId = query.docs[0].id;
+          this.nextTweet = query.docs[0].get("tweet");
+          this.nextDoc = query.docs[0];
 
-          if(!this.currentDocRef) { // in case current tweet was already dealt with while a document was being fetched
+          if(!this.currentDoc) { // in case current tweet was already dealt with while a document was being fetched
             return this.advance()
           }
         }
@@ -239,12 +241,12 @@ export default class LoadView extends Vue {
       if (query.size) {
         this.currentId = query.docs[0].id;
         this.currentTweet = query.docs[0].get("tweet");
-        this.currentDocRef = query.docs[0].ref;
+        this.currentDoc = query.docs[0];
 
         if (query.size > 1) {
           this.nextId = query.docs[1].id;
           this.nextTweet = query.docs[1].get("tweet");
-          this.nextDocRef = query.docs[1].ref;
+          this.nextDoc = query.docs[1];
         }
       }
       this.currentLoading = false;

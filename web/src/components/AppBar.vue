@@ -4,6 +4,7 @@
     <v-btn text to="/">About</v-btn>
     <v-btn text v-if="isAuthenticated" to="/load">Load</v-btn>
     <v-btn text v-if="isAuthenticated" to="/curate">Curate</v-btn>
+    <v-btn text v-if="isAuthenticated" to="/tweets">Tweets</v-btn>
     <v-btn text v-if="isAuthenticated" @click="logout()">Log out</v-btn>
     <v-btn v-else text @click="login()">Log in with Twitter</v-btn>
 

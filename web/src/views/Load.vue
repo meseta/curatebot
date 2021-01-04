@@ -124,6 +124,10 @@ export default class LoadView extends Vue {
 
     Promise.all(promises)
     .then(() => {
+      // commit writes, otherwise timestamp problems later
+      return firebase.firestore().clearPersistence()
+    })
+    .then(() => {
       this.showSuccess(`Completed uploading ${updated} tweets`)
       this.input = '';
       this.$router.push('/curate')
