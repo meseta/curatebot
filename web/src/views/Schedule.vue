@@ -9,25 +9,30 @@
         <thead>
           <tr>
             <th class="text-center">Time</th>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-            <th>Sun</th>
+            <th
+              v-for="(dayName, dayIdx) in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']"
+              :key="'day'+dayName"
+              class="text-center px-0"
+            >
+              <v-chip v-if="(dayIdx-1) == currentDay" small color="primary">{{ dayName}}</v-chip>
+              <span v-else>{{ dayName }}</span>
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr
             v-for="hourIdx in 24"
-            :key="(hourIdx-1)/24"
+            :key="'row'+hourIdx"
           >
             <td class="text-center">
-              <v-chip v-if="hourIdx == current" small color="primary">{{ hourIdx-1 }}:00 now</v-chip>
+              <v-chip v-if="(hourIdx-1) == currentHour" small color="primary">{{ hourIdx-1 }}:00 now</v-chip>
               <span v-else>{{ hourIdx-1 }}:00</span>
             </td>
-            <td v-for="dayIdx in 7" :key="(dayIdx-1)*24+hourIdx-1">
+            <td
+              v-for="dayIdx in 7"
+              :key="(dayIdx-1)*24+hourIdx-1"
+              class="text-center"
+            >
               <v-simple-checkbox
                 :disabled="loading"
                 v-model="schedule[(dayIdx-1)*24+hourIdx-1]"
@@ -76,7 +81,8 @@ export default class LoadView extends Vue {
   @alertModule.Mutation showSuccess!: Function;
 
   schedule: Array<boolean> = new Array(24*7).fill(false);
-  current = new Date().getUTCHours();
+  currentHour = new Date().getUTCHours();
+  currentDay = new Date().getUTCDay();
   loading = true;
 
   clearAction() {
