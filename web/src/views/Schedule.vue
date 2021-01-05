@@ -85,7 +85,7 @@ export default class LoadView extends Vue {
   currentDay = new Date().getUTCDay();
   loading = true;
 
-  lastRun: Date | null = null;
+  lastRun = "unknown";
 
   clearAction() {
     this.schedule = new Array(24*7).fill(false);
@@ -132,7 +132,7 @@ export default class LoadView extends Vue {
       return firestore.collection('system').doc('stats').get()
     })
     .then(doc => {
-      this.lastRun = doc.get('lastRun');
+      this.lastRun = doc.get('lastRun').toDate().toUTCString();
     })
     .catch(err => {
       console.error(err);

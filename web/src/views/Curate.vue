@@ -7,6 +7,11 @@
         <v-chip outlined dark>{{ count }} tweets to curate</v-chip>
       </template>
 
+      <p>
+        Choose whether to enqueue tweet (will be added to your Tweet queue to be sent automatically be the bot on a schedule), or to delete.
+        Also supports swiping, and keyboard shortucts (<v-icon>mdi-numeric-1-box</v-icon> and <v-icon>mdi-numeric-2-box</v-icon> number keys)
+      </p>
+
       <v-textarea
         v-model="displayTweet"
         outlined
@@ -33,6 +38,7 @@
           @click="deleteAction"
         >
           Delete
+          <v-icon>mdi-numeric-1-box</v-icon>
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn
@@ -57,6 +63,7 @@
           @click="enqueueAction"
         >
           Enqueue
+          <v-icon>mdi-numeric-2-box</v-icon>
         </v-btn>
       </template>
 
@@ -233,7 +240,20 @@ export default class LoadView extends Vue {
     }
   }
 
+  handleKey(event: KeyboardEvent) {
+    const key = String.fromCharCode(event.keyCode);
+    if (key == "1") {
+      this.deleteAction(true);
+    }
+    else if (key == "2") {
+      this.enqueueAction(true);
+    }
+  }
+
   mounted() {
+    window.addEventListener('keypress', this.handleKey);
+
+
     firestore.collection('users').doc(this.uid).get()
     .then(doc => {
       this.count = doc?.get("newCount") || 0;
@@ -262,6 +282,10 @@ export default class LoadView extends Vue {
       console.error(err);
       this.showError("Something went wrong, could not load tweets");
     })
+  }
+
+  beforeDestroy() {
+    window.removeEventListener('keypress', this.handleKey);
   }
 }
 </script>
