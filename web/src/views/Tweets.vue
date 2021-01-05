@@ -46,7 +46,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import Section from '@/components/Section.vue'
 import Container from '@/components/Container.vue'
 import { firestore, firebase } from '@/plugins/firebase'
-import { State, Mutation } from 'vuex-class';
+import { namespace } from 'vuex-class';
 
 interface TweetData {
   tweet: string;
@@ -54,15 +54,17 @@ interface TweetData {
   doc: firebase.firestore.DocumentSnapshot;
 }
 
-const pagesize = 10
+const pagesize = 10;
+const authModule = namespace('auth');
+const alertModule = namespace('alert');
 
 @Component({ components: { Section, Container } })
 export default class LoadView extends Vue {
-  @State('uid', { namespace: 'auth' }) uid!: string;
-  @Mutation('showError', { namespace: 'alert'}) showError!: Function;
-  @Mutation('showSuccess', { namespace: 'alert'}) showSuccess!: Function;
-  @Mutation('showWarning', { namespace: 'alert'}) showWarning!: Function;
-  @Mutation('showInfo', { namespace: 'alert'}) showInfo!: Function;
+  @authModule.State uid!: string;
+  @alertModule.Mutation showError!: Function;
+  @alertModule.Mutation showSuccess!: Function;
+  @alertModule.Mutation showWarning!: Function;
+  @alertModule.Mutation showInfo!: Function;
 
   tweets: Array<TweetData> = [];
   loading = true;

@@ -35,14 +35,16 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { State, Action, Getter } from 'vuex-class';
+import { namespace } from 'vuex-class';
 import { UserData } from '@/store/auth/types';
+
+const authModule = namespace('auth');
 
 @Component
 export default class AppBar extends Vue {
-  @State('userData', { namespace: 'auth'}) userData!: UserData;
-  @Action('login', { namespace: 'auth' }) login!: Function;
-  @Action('logout', { namespace: 'auth' }) logout!: Function;
-  @Getter('isAuthenticated', { namespace: 'auth' }) isAuthenticated!: boolean;
+  @authModule.State userData!: UserData;
+  @authModule.Action login!: Function;
+  @authModule.Action logout!: Function;
+  @authModule.Getter isAuthenticated!: boolean;
 }
 </script>

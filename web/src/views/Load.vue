@@ -38,13 +38,16 @@
 import { Vue, Component } from 'vue-property-decorator';
 import Section from '@/components/Section.vue'
 import { firestore, firebase } from '@/plugins/firebase'
-import { State, Mutation } from 'vuex-class';
+import { namespace } from 'vuex-class';
+
+const authModule = namespace('auth');
+const alertModule = namespace('alert');
 
 @Component({ components: { Section } })
 export default class LoadView extends Vue {
-  @State('uid', { namespace: 'auth' }) uid!: string;
-  @Mutation('showError', { namespace: 'alert'}) showError!: Function;
-  @Mutation('showSuccess', { namespace: 'alert'}) showSuccess!: Function;
+  @authModule.State uid!: string;
+  @alertModule.Mutation showError!: Function;
+  @alertModule.Mutation showSuccess!: Function;
 
   placeholder = '[\n   "This is a tweet",\n    "Another tweet"\n]';
   input = '';

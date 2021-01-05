@@ -68,7 +68,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import Section from '@/components/Section.vue'
 import { firestore, firebase } from '@/plugins/firebase'
-import { State, Mutation, Action, namespace} from 'vuex-class';
+import { namespace } from 'vuex-class';
 
 const authModule = namespace('auth')
 const alertModule = namespace('alert')
