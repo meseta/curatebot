@@ -10,11 +10,11 @@
           <tr>
             <th class="text-center">Time</th>
             <th
-              v-for="(dayName, dayIdx) in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']"
+              v-for="(dayName, dayIdx) in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']"
               :key="'day'+dayName"
               class="text-center px-0"
             >
-              <v-chip v-if="(dayIdx-1) == currentDay" small color="primary">{{ dayName}}</v-chip>
+              <v-chip v-if="dayIdx == currentDay" small color="primary">{{ dayName}}</v-chip>
               <span v-else>{{ dayName }}</span>
             </th>
           </tr>
