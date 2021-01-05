@@ -3,7 +3,7 @@
     <Section>
       <template v-slot:title>Schedule</template>
       <p>
-      When to post? CurateBot will post sometime within each hour. Times are UTC. Current hour is marked with "now"
+      When to post? CurateBot will post sometime within each hour. Times are UTC. Current hour is marked with "now". Last run: {{ lastRun }}
       </p>
       <v-simple-table dense>
         <thead>
@@ -85,6 +85,8 @@ export default class LoadView extends Vue {
   currentDay = new Date().getUTCDay();
   loading = true;
 
+  lastRun: Date | null = null;
+
   clearAction() {
     this.schedule = new Array(24*7).fill(false);
     this.saveAction();
@@ -126,6 +128,11 @@ export default class LoadView extends Vue {
           this.schedule[idx] = true;
         }
       }
+
+      return firestore.collection('system').doc('stats').get()
+    })
+    .then(doc => {
+      this.lastRun = doc.get('lastRun');
     })
     .catch(err => {
       console.error(err);

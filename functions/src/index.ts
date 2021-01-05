@@ -30,19 +30,25 @@ async function processUser(doc: admin.firestore.DocumentSnapshot): Promise<any> 
           access_token_secret: userSecret,
         });
         
-        client.post('statuses/update', {status: tweet},  (error, tweet, response) => {
-          if(error) throw error;
+        return client.post('statuses/update', {status: tweet})
+        .then(tweet => {
           logger.info("Tweet sent!", {tweet});
-        });
+          return firestore.collection('system').doc('stats').update({
+            tweetsSent: admin.firestore.FieldValue.increment(1)
+          })
+        })
+        .then(() => {
+          return tweetDoc.ref.delete();
+        })
+
       }
       return tweetDoc.ref.delete();
     }
-    else {
-      logger.info("No more scheduled tweets for user", {uid});
-      return doc.ref.update({
-        isActive: false
-      });
-    }
+  
+    logger.info("No more scheduled tweets for user", {uid});
+    return doc.ref.update({
+      isActive: false
+    });
   })
 }
 
@@ -63,6 +69,11 @@ export const tweetScan = functions.pubsub.schedule('every 1 hours').onRun(async 
     })
 
     return Promise.all(promises);
+  })
+  .then(() => {
+    return firestore.collection('system').doc('stats').update({
+      lastRun: admin.firestore.FieldValue.serverTimestamp()
+    })
   })
   .then(() => {
     logger.info("Done scan");

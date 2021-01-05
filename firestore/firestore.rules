@@ -16,6 +16,11 @@ service cloud.firestore {
       	allow read, write: if isUser(uid);
       }
     }
+    
+    match /system/stats {
+      allow read: if true;
+      allow write: if false;
+    }
 
     match /{document=**} {
       allow read, write: if false;
