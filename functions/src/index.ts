@@ -4,6 +4,11 @@ import * as Twitter from 'twitter';
 
 admin.initializeApp();
 
+const runtimeOpts: functions.RuntimeOptions = {
+  timeoutSeconds: 120,
+  memory: "128MB",
+}
+
 const logger = functions.logger;
 const firestore = admin.firestore();
 const apiKey = functions.config().twitter.api_key;
@@ -18,11 +23,11 @@ async function processUser(doc: admin.firestore.DocumentSnapshot): Promise<any> 
   .then((query: admin.firestore.QuerySnapshot) => {
     if (query.size) {
       const tweetDoc = query.docs[0];
-      const tweet = tweetDoc.get('tweet');
+      const tweetText = tweetDoc.get('tweet');
 
-      logger.info("Got tweet for user", {uid, tweet});
+      logger.info("Got tweet for user", {uid, tweetText});
 
-      if (tweet) {
+      if (tweetText) {
         const client = new Twitter({
           consumer_key: apiKey,
           consumer_secret: apiSecret,
@@ -30,11 +35,11 @@ async function processUser(doc: admin.firestore.DocumentSnapshot): Promise<any> 
           access_token_secret: userSecret,
         });
         
-        return client.post('statuses/update', {status: tweet})
+        return client.post('statuses/update', {status: tweetText})
         .then(tweet => {
           logger.info("Tweet sent!", {tweet});
           return firestore.collection('system').doc('stats').update({
-            tweetsSent: admin.firestore.FieldValue.increment(1)
+            tweetsSent: admin.firestore.FieldValue.increment(1),
           })
         })
         .then(() => {
@@ -47,12 +52,12 @@ async function processUser(doc: admin.firestore.DocumentSnapshot): Promise<any> 
   
     logger.info("No more scheduled tweets for user", {uid});
     return doc.ref.update({
-      isActive: false
+      isActive: false,
     });
   })
 }
 
-export const tweetScan = functions.pubsub.schedule('every 1 hours').onRun(async (context) => {
+export const tweetScan = functions.runWith(runtimeOpts).pubsub.schedule('every 1 hours').onRun(async (context) => {
   const currentHour = new Date().getUTCHours();
   const currentDay = new Date().getUTCDay();
   const currentIdx = currentDay*24+currentHour;
@@ -72,7 +77,7 @@ export const tweetScan = functions.pubsub.schedule('every 1 hours').onRun(async 
   })
   .then(() => {
     return firestore.collection('system').doc('stats').update({
-      lastRun: admin.firestore.FieldValue.serverTimestamp()
+      lastRun: admin.firestore.FieldValue.serverTimestamp(),
     })
   })
   .then(() => {
