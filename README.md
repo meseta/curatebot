@@ -2,7 +2,7 @@
 
 ![CurateBot Logo](web/public/curatebot_preview.png)
 
-CurateBot is a simple bot to curate tweets, and post them on a schedule.
+[CurateBot](https://curatebot.meseta.dev) is a simple bot to curate tweets, and post them on a schedule.
 
 1. Load a big list of tweets as a JSON
 1. Curate tweets by deciding whether to delete or enqueue
