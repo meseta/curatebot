@@ -4,10 +4,10 @@
       <template v-slot:title>
         Queued Tweet
         <v-spacer></v-spacer>
-        <v-chip outlined dark>{{ idx + 1 }}</v-chip>
+        <v-chip outlined>{{ idx + 1 }}</v-chip>
         <v-menu bottom left>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn dark icon v-bind="attrs" v-on="on">
+            <v-btn icon v-bind="attrs" v-on="on">
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
           </template>
@@ -35,8 +35,8 @@
 
     <Container>
       <v-progress-linear v-if="loading" indeterminate></v-progress-linear>
-      <v-btn v-else-if="!listComplete" color="primary" @click="loadMore()">Load more</v-btn>
-      <v-btn v-else disabled>No more tweets to load</v-btn>
+      <v-btn v-else-if="!listComplete" color="primary" class="black--text" @click="loadMore()">Load more</v-btn>
+      <v-btn v-else disabled outline dark>No more tweets to load</v-btn>
     </Container>
   </v-container>
 </template>

@@ -3,7 +3,7 @@
     class="my-4 mx-auto"
     max-width="600"
   >
-    <v-card-title v-if="hasTitle()" class="primary white--text mb-5">
+    <v-card-title v-if="hasTitle()" class="primary mb-5">
       <slot name="title"></slot>
     </v-card-title>
 

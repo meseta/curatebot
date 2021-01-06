@@ -1,13 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!--
+      Welcome developers! If you're here, curious about what stack I used, I blogged the whole thing
+      here: https://dev.to/meseta/curatebot-devlog-0-simple-interface-for-curating-and-scheduling-ai-generated-tweets-8f3
+      and you can find the source code by following the Github link at the bottom of the rendered page.
+
+      To save you time:
+      - Vue 2 in Typescript (with vuex, vue-router, all those goodies)
+      - Vuetify for the component library
+      - Firebase for auth and scheduled services
+      - The npm Twitter module for sending tweets
+
+      See you around!
+    -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="<%= BASE_URL %>apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<%= BASE_URL %>favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<%= BASE_URL %>favicon-16x16.png">
+    <link rel="manifest" href="<%= BASE_URL %>site.webmanifest">
+    <link rel="mask-icon" href="<%= BASE_URL %>safari-pinned-tab.svg" color="#FFA000">
+    <meta name="msapplication-TileColor" content="#FFA000">
+
+    <!-- Me(se)ta -->
+    <meta name="description" content="Curate and schedule AI-generated tweets">
+    <meta name="keywords" content="Twitter,curate,ai,gpt2,bot">
+    <meta name="author" content="Yuan Gao">
+    <meta name="copyright" content="Copyright 2021, Yuan Gao">
+    <meta name="theme-color" content="#FFA000">
+
+    <!-- Twitter -->
+    <meta name="twitter:title" content="CurateBot">
+    <meta name="twitter:description" content="Curate and schedule AI-generated tweets">
+    <meta name="twitter:image" content="https://curatebot.meseta.dev/curatebot_preview.png">
+    <meta name="twitter:url" content="https://curatebot.meseta.dev/">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="CurateBot">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://curatebot.meseta.dev/">
+    <meta property="og:image" content="https://curatebot.meseta.dev/curatebot_preview.png">
+    <meta property="og:description" content="Curate and schedule AI-generated tweets">
+
   </head>
   <body>
     <noscript>

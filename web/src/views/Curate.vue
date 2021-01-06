@@ -4,7 +4,7 @@
       <template v-slot:title>
         Curate Tweets
         <v-spacer></v-spacer>
-        <v-chip outlined dark>{{ count }} tweets to curate</v-chip>
+        <v-chip outlined>{{ count }} tweets to curate</v-chip>
       </template>
 
       <p>

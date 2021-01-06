@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app id="main">
     <AppBar />
 
     <v-main>
@@ -29,3 +29,9 @@ export default class AppView extends Vue {
   year = new Date().getFullYear();
 }
 </script>
+
+<style scoped>
+#main {
+  background-color: #333;
+}
+</style>

@@ -1,16 +1,37 @@
 <template>
-  <v-app-bar app color="primary" dark>
-    <v-toolbar-items>
-    <v-btn text icon to="/"><v-icon>mdi-hand-heart</v-icon></v-btn>
+  <v-app-bar app flat color="primary">
 
-    <v-btn text v-if="isAuthenticated" to="/load">Load</v-btn>
-    <v-btn text v-if="isAuthenticated" to="/curate">Curate</v-btn>
-    <v-btn text v-if="isAuthenticated" to="/tweets">Tweets</v-btn>
-    <v-btn text v-if="isAuthenticated" to="/schedule">Schedule</v-btn>
-    <v-btn text v-if="isAuthenticated" @click="logout()">Log out</v-btn>
-    <v-btn v-else text @click="login()">Log in with Twitter</v-btn>
     
+    <v-toolbar-items v-if="isAuthenticated">
+      <v-btn text to="/">
+        <v-icon :left="!collapse">mdi-home</v-icon>
+        <span v-if="!collapse">Home</span>
+      </v-btn>
+      <v-btn
+        v-for="item in menu"
+        :key="item.text"
+        :to="item.to"
+        text
+      >
+        <v-icon :left="!collapse">{{ item.icon }}</v-icon>
+        <span v-if="!collapse">{{ item.text }}</span>
+      </v-btn>
+      <v-btn text @click="logout()">
+        <v-icon :left="!collapse">mdi-exit-to-app</v-icon>
+        <span v-if="!collapse">Logout</span>
+      </v-btn>
     </v-toolbar-items>
+    <v-toolbar-items v-else>
+      <v-btn text to="/">
+        <v-icon left>mdi-home</v-icon>
+        Home
+      </v-btn>
+      <v-btn text @click="login()">
+        <v-icon left>mdi-account</v-icon>
+        Log in with Twitter
+      </v-btn>
+    </v-toolbar-items>
+    
     <v-spacer></v-spacer>
 
     <v-sheet v-if="isAuthenticated" color="rgba(0,0,0,0)">
@@ -46,5 +67,16 @@ export default class AppBar extends Vue {
   @authModule.Action login!: Function;
   @authModule.Action logout!: Function;
   @authModule.Getter isAuthenticated!: boolean;
+
+  menu = [
+    {text: "Load", to: "/load", icon:"mdi-upload"},
+    {text: "Curate", to: "/curate", icon:"mdi-hand-heart"},
+    {text: "Tweets", to: "/tweets", icon:"mdi-view-list"},
+    {text: "Schedule", to: "/schedule", icon:"mdi-av-timer"},
+  ]
+
+  get collapse() {
+    return this.$vuetify.breakpoint.smAndDown;
+  }
 }
 </script>
